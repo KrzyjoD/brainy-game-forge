@@ -66,9 +66,17 @@ export const GameBuilder = ({ onGameGenerated, isGenerating, setIsGenerating }: 
             id="game-idea"
             placeholder="A platformer game where you play as a ninja collecting stars while avoiding enemies..."
             value={gameIdea}
-            onChange={(e) => setGameIdea(e.target.value)}
-            className="min-h-[120px] bg-input/50 border-border focus:border-neon-cyan transition-colors"
+            onChange={(e) => {
+              console.log('Textarea onChange triggered:', e.target.value);
+              setGameIdea(e.target.value);
+            }}
+            onFocus={() => console.log('Textarea focused')}
+            onBlur={() => console.log('Textarea blurred')}
+            onClick={() => console.log('Textarea clicked')}
+            className="min-h-[120px] bg-background border-2 border-border focus:border-neon-cyan transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             disabled={isGenerating}
+            autoFocus
+            style={{ zIndex: 10, position: 'relative' }}
           />
         </div>
 
