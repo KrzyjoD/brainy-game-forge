@@ -3,6 +3,7 @@
 export interface GameData {
   title: string;
   story: string;
+  theme: string;
   player: {
     x: number;
     y: number;
@@ -175,6 +176,7 @@ export function generateGameFromIdea(idea: string): GameData {
   const gameData: GameData = {
     title: generateGameTitle(idea, themeKey),
     story: generateGameStory(idea, themeKey),
+    theme: themeKey,
     player: {
       x: 50,
       y: canvasHeight / 2,

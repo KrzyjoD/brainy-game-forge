@@ -8,6 +8,7 @@ export class GameEngine {
   private gameData: GameData;
   private isRunning: boolean = false;
   private animationId: number | null = null;
+  private theme: string = "space";
 
   // Game state
   private player: { x: number; y: number; size: number; color: string };
@@ -30,6 +31,7 @@ export class GameEngine {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d')!;
     this.gameData = gameData;
+    this.theme = (gameData as any).theme || "space";
     
     // Set canvas size
     this.canvas.width = gameData.canvasWidth;
@@ -315,11 +317,163 @@ export class GameEngine {
   }
 
   private drawBackground() {
-    // Draw a subtle grid pattern
+    switch (this.theme) {
+      case "space":
+        this.drawSpaceBackground();
+        break;
+      case "underwater":
+        this.drawUnderwaterBackground();
+        break;
+      case "forest":
+        this.drawForestBackground();
+        break;
+      case "medieval":
+        this.drawMedievalBackground();
+        break;
+      case "cyber":
+        this.drawCyberBackground();
+        break;
+      default:
+        this.drawSpaceBackground();
+    }
+  }
+
+  private drawSpaceBackground() {
+    // Dark space background with stars
+    this.ctx.fillStyle = '#0a0a0a';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Add stars
+    this.ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 100; i++) {
+      const x = (i * 37 + Date.now() * 0.0001) % this.canvas.width;
+      const y = (i * 73 + Date.now() * 0.0002) % this.canvas.height;
+      const size = Math.sin(i + Date.now() * 0.001) * 2 + 2;
+      this.ctx.globalAlpha = Math.abs(Math.sin(i + Date.now() * 0.002)) * 0.8 + 0.2;
+      this.ctx.fillRect(x, y, size, size);
+    }
+    this.ctx.globalAlpha = 1;
+    
+    // Add nebula effect
+    const gradient = this.ctx.createRadialGradient(
+      this.canvas.width * 0.3, this.canvas.height * 0.3, 0,
+      this.canvas.width * 0.3, this.canvas.height * 0.3, 200
+    );
+    gradient.addColorStop(0, 'rgba(138, 43, 226, 0.1)');
+    gradient.addColorStop(1, 'rgba(138, 43, 226, 0)');
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  private drawUnderwaterBackground() {
+    // Ocean gradient background
+    const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+    gradient.addColorStop(0, '#001133');
+    gradient.addColorStop(0.5, '#003366');
+    gradient.addColorStop(1, '#004080');
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Add floating bubbles
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    for (let i = 0; i < 30; i++) {
+      const x = (i * 47 + Date.now() * 0.0005) % this.canvas.width;
+      const y = (i * 83 - Date.now() * 0.001) % this.canvas.height;
+      const size = Math.sin(i + Date.now() * 0.003) * 5 + 8;
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, size, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    
+    // Add underwater light rays
+    this.ctx.strokeStyle = 'rgba(0, 255, 255, 0.1)';
+    this.ctx.lineWidth = 2;
+    for (let i = 0; i < 5; i++) {
+      const x = (i * 150 + Math.sin(Date.now() * 0.001) * 50) % this.canvas.width;
+      this.ctx.beginPath();
+      this.ctx.moveTo(x, 0);
+      this.ctx.lineTo(x + 20, this.canvas.height);
+      this.ctx.stroke();
+    }
+  }
+
+  private drawForestBackground() {
+    // Forest gradient background
+    const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+    gradient.addColorStop(0, '#1a3a1a');
+    gradient.addColorStop(0.7, '#2d5a2d');
+    gradient.addColorStop(1, '#0d2d0d');
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Add floating magical particles
+    this.ctx.fillStyle = 'rgba(255, 0, 255, 0.6)';
+    for (let i = 0; i < 20; i++) {
+      const x = (i * 67 + Math.sin(Date.now() * 0.002 + i) * 30) % this.canvas.width;
+      const y = (i * 89 + Math.cos(Date.now() * 0.003 + i) * 40) % this.canvas.height;
+      const size = Math.sin(i + Date.now() * 0.004) * 3 + 4;
+      this.ctx.globalAlpha = Math.abs(Math.sin(i + Date.now() * 0.002)) * 0.8 + 0.3;
+      this.ctx.beginPath();
+      this.ctx.arc(x, y, size, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    this.ctx.globalAlpha = 1;
+    
+    // Add tree silhouettes
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    for (let i = 0; i < 8; i++) {
+      const x = (i * 100) % this.canvas.width;
+      this.ctx.fillRect(x, this.canvas.height - 100, 20, 100);
+      this.ctx.beginPath();
+      this.ctx.arc(x + 10, this.canvas.height - 100, 30, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+  }
+
+  private drawMedievalBackground() {
+    // Castle stone background
+    const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+    gradient.addColorStop(0, '#4a4a4a');
+    gradient.addColorStop(0.5, '#3a3a3a');
+    gradient.addColorStop(1, '#2a2a2a');
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Add stone brick pattern
     this.ctx.strokeStyle = '#1a1a1a';
     this.ctx.lineWidth = 1;
+    const brickWidth = 60;
+    const brickHeight = 30;
     
-    const gridSize = 40;
+    for (let y = 0; y < this.canvas.height; y += brickHeight) {
+      for (let x = 0; x < this.canvas.width; x += brickWidth) {
+        const offsetX = (y / brickHeight) % 2 === 0 ? 0 : brickWidth / 2;
+        this.ctx.strokeRect(x + offsetX, y, brickWidth, brickHeight);
+      }
+    }
+    
+    // Add torch flames effect
+    this.ctx.fillStyle = 'rgba(255, 100, 0, 0.4)';
+    for (let i = 0; i < 3; i++) {
+      const x = 100 + i * 300;
+      const flameHeight = Math.sin(Date.now() * 0.01 + i) * 10 + 25;
+      this.ctx.beginPath();
+      this.ctx.arc(x, 80, flameHeight, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+  }
+
+  private drawCyberBackground() {
+    // Digital grid background
+    this.ctx.fillStyle = '#0a0a0a';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Add digital grid
+    this.ctx.strokeStyle = '#00ffff';
+    this.ctx.lineWidth = 1;
+    this.ctx.globalAlpha = 0.3;
+    
+    const gridSize = 50;
     for (let x = 0; x < this.canvas.width; x += gridSize) {
       this.ctx.beginPath();
       this.ctx.moveTo(x, 0);
@@ -333,5 +487,27 @@ export class GameEngine {
       this.ctx.lineTo(this.canvas.width, y);
       this.ctx.stroke();
     }
+    this.ctx.globalAlpha = 1;
+    
+    // Add scanning lines
+    this.ctx.strokeStyle = '#ff00ff';
+    this.ctx.lineWidth = 2;
+    this.ctx.globalAlpha = 0.6;
+    const scanY = (Date.now() * 0.1) % this.canvas.height;
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, scanY);
+    this.ctx.lineTo(this.canvas.width, scanY);
+    this.ctx.stroke();
+    
+    // Add digital particles
+    this.ctx.fillStyle = '#00ff00';
+    for (let i = 0; i < 15; i++) {
+      const x = (i * 53 + Date.now() * 0.002) % this.canvas.width;
+      const y = (i * 79 + Date.now() * 0.001) % this.canvas.height;
+      const size = Math.sin(i + Date.now() * 0.005) * 2 + 3;
+      this.ctx.globalAlpha = Math.abs(Math.sin(i + Date.now() * 0.003)) * 0.8 + 0.2;
+      this.ctx.fillRect(x, y, size, size);
+    }
+    this.ctx.globalAlpha = 1;
   }
 }
